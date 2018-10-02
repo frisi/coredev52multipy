@@ -1,5 +1,5 @@
 #!/bin/sh
-git clone -b 5.2 git@github.com:plone/buildout.coredev.git
+git clone -b zodbupdate-2525 git@github.com:plone/buildout.coredev.git
 
 # for py 2.7
 cd py2
