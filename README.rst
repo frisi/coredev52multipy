@@ -63,8 +63,8 @@ Copy Database to the py3 instance and migrate it there in place
 
 ::
 
-    cp py2/var/filestorage/Data.fs-unmigrated py3/var/filestorage/Data.fs
-    rm -rf py3/var/blobstorage; cp -a py2/var/blobstorage-unmigrated/ py3/var/blobstorage
+    cp py2/var/filestorage/Data.fs py3/var/filestorage/Data.fs
+    rm -rf py3/var/blobstorage; cp -a py2/var/blobstorage/ py3/var/blobstorage
     py2/bin/zodbupdate --pack --convert-py3 --file py3/var/filestorage/Data.fs
 
 
@@ -309,8 +309,15 @@ solution: clear and rebuild portal_catalog (after the migration, after first sta
 
 
 
-Blobs
-'''''
+Blobs (kind of Solved)
+''''''''''''''''''''''
+
+TLDR;
+
+PR is ready, but test needs to be fixed before we can merge it
+https://github.com/zopefoundation/zodbupdate/pull/7/files
+
+
 
 Uploaded test image is missing the actual image data, an error is logged::
 
@@ -331,13 +338,22 @@ Uploaded test image is missing the actual image data, an error is logged::
 References to blob get lost as Silvain already pointed out (https://github.com/plone/Products.CMFPlone/issues/2525#issuecomment-426047862)
 
 
-XXX more blob knowledge needed. how is pickle related to blob?
 
 Strategy:
 
-* when iterating over pickles in zodbupdate.update.Updater.__call__
-  *somehow* check if pickle has a related blob and rename it
-  or make update method not break the relation to the blob
+* Skip processing of `ZODB.blob` records in `zodbupdate.update.Updater.__call__`
+  so no rename/move of files in var/blobstorage is needed
+
+
+Background:
+
+blobstorage files correspond to a zodb record
+
+the filename of a blobstorage file (eg: `blobstorage/0x00/0x00/0x00/0x00/0x00/0x00/0x17/0xa0/0x03cab8373063e588.blob`)
+is made up of the oid and serial of the database record:
+
+oid: b'\x00\x00\x00\x00\x00\x00\x17\xa0'
+serial: b'\x03\xca\xb870c\xe5\x88'
 
 
 
@@ -360,4 +376,3 @@ https://github.com/plone/Products.CMFPlone/issues/2525
 
 
 * login
-
