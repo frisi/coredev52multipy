@@ -238,7 +238,7 @@ To debug the problem, set pdb in `Products.PluggableAuthService.plugins.ZODBUser
 
 ::
 
-    # user created on python3 buildot
+    # user created on python3 buildout
     (Pdb++) self._user_passwords.get('py3_user')
     b'{SSHA}+PbUAlxU0josF67yU6PT8sMtHRy+AODY9qGB'
     # migrated user
